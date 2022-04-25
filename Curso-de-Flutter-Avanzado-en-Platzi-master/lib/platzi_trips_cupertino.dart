@@ -14,15 +14,15 @@ class PlatziTripsCupertino extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                   icon: Icon(Icons.home, color: Colors.indigo),
-                  title: Text("")
+                  label: ""
               ),
               BottomNavigationBarItem(
                   icon: Icon(Icons.search, color: Colors.indigo),
-                  title: Text("")
+                  label: ""
               ),
               BottomNavigationBarItem(
                   icon: Icon(Icons.person, color: Colors.indigo),
-                  title: Text("")
+                  label: ""
               ),
             ]
         ),
