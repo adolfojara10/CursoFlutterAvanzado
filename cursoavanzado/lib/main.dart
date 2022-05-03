@@ -1,13 +1,26 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:generic_bloc_provider/generic_bloc_provider.dart';
 import 'platzi_trips.dart';
 import 'platzi_trips_cupertino.dart';
 import 'package:platzi_trips_app/user/bloc/bloc_user.dart';
 import 'package:platzi_trips_app/user/ui/screens/sigin_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(MyApp());
+void main() async{
+
+  await Firebase.initializeApp(
+    // Replace with actual values
+    options: FirebaseOptions(
+      apiKey: "AIzaSyDu0ecKH08tJ9FbP3ajeAzglJUDIfXfvh0",
+      appId: "1:428759189082:android:2c44b2c5eaf909872eba63",
+      messagingSenderId: "428759189082",
+      projectId: "platzitripsflutter-5752e",
+    ),
+  );
+  runApp(MyApp());
+
+} 
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
