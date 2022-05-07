@@ -52,6 +52,7 @@ class _SignIn extends State<SignIn> {
           ButtonGreens(
               text: "Login with Gmail",
               onPressed: () {
+                userBloc.signOut();
                 userBloc.signIn().then((UserCredential credential) =>
                     print("usuario: ${credential.user.displayName}"));
               },
