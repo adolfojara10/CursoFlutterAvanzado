@@ -10,11 +10,15 @@ class UserBloc implements Bloc {
   Stream<User> get authStatus => streamFirebase;
 
 
-  
+
   //casos de uso de user
   //Sign in
   Future<UserCredential> signIn() {
     return _auth_repo.signInFirebase();
+  }
+
+  signOut() {
+    _auth_repo.signOut();
   }
 
   @override
