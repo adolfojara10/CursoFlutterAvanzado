@@ -10,7 +10,7 @@ import '../../model/user.dart';
 
 class ProfileHeader extends StatelessWidget {
   UserBloc userBloc;
-  User user;
+  UserF user;
 
   Widget showProfileData(AsyncSnapshot snapshot) {
     if (!snapshot.hasData || snapshot.hasError) {
@@ -26,7 +26,7 @@ class ProfileHeader extends StatelessWidget {
       );
     } else {
       print("logeado");
-      user = User(
+      user = UserF(
           username: snapshot.data.displayName,
           email: snapshot.data.email,
           photoURL: snapshot.data.photoUrl);

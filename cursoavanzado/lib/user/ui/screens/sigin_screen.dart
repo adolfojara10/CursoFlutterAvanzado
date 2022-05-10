@@ -6,6 +6,8 @@ import 'package:platzi_trips_app/user/bloc/bloc_user.dart';
 import 'package:generic_bloc_provider/generic_bloc_provider.dart';
 import 'package:platzi_trips_app/platzi_trips_cupertino.dart';
 
+import '../../model/user.dart';
+
 class SignIn extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -53,8 +55,14 @@ class _SignIn extends State<SignIn> {
               text: "Login with Gmail",
               onPressed: () {
                 userBloc.signOut();
-                userBloc.signIn().then((UserCredential credential) =>
-                    print("usuario: ${credential.user.displayName}"));
+                userBloc.signIn().then((UserCredential user) {
+                  userBloc.updateUserData(UserF(
+                      uid: user.user.uid,
+                      email: user.user.email,
+                      username: user.user.displayName,
+                      photoURL: user.user.photoURL,
+                      ));
+                });
               },
               width: 300.0,
               height: 50.0)

@@ -1,8 +1,20 @@
-class Place {
-  String name;
-  String where;
-  String type;
-  String steps;
+import 'package:flutter/material.dart';
 
-  Place(this.name, this.where, this.type, this.steps);
+import '../../user/model/user.dart';
+
+class Place {
+  String id;
+  String name;
+  String description;
+  String uriImage;
+  int likes;
+  UserF userOwner;
+
+  Place(
+      {Key key,
+      @required this.name,
+      @required this.description,
+      @required this.uriImage,
+      this.likes,
+      @required this.userOwner});
 }
