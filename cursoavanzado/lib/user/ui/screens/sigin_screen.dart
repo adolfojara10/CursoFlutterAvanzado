@@ -17,12 +17,14 @@ class SignIn extends StatefulWidget {
 
 class _SignIn extends State<SignIn> {
   UserBloc userBloc;
+  double screenwidth;
 
   @override
   Widget build(BuildContext context) {
     //se instancia el objeto, el context es lo que indica el ciclo de vida de la app
     //es decir se va cuando se cierra la app. Es patron singleton
     userBloc = BlocProvider.of(context);
+    screenwidth = MediaQuery.of(context).size.width;
     return _handleCurrentSession();
   }
 
@@ -43,25 +45,34 @@ class _SignIn extends State<SignIn> {
   Widget signInGoogleUI() {
     return Scaffold(
       body: Stack(alignment: Alignment.center, children: <Widget>[
-        GradientBack("", null),
+        GradientBack(height: null),
         Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Text("Welcome \n This is your Travel app",
-              style: TextStyle(
-                  fontSize: 37,
-                  fontFamily: "Lato",
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold)),
+          Flexible(
+              child: Container(
+                  width: screenwidth -
+                      (screenwidth /
+                          14), //hago esta resta para colocarle margenes horizontales y ademas simular diferentes width de pantallas
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      'Welcome \n This is your Travel App',
+                      style: TextStyle(
+                          fontFamily: 'lato',
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ))),
           ButtonGreens(
               text: "Login with Gmail",
               onPressed: () {
                 userBloc.signOut();
                 userBloc.signIn().then((UserCredential user) {
                   userBloc.updateUserData(UserF(
-                      uid: user.user.uid,
-                      email: user.user.email,
-                      username: user.user.displayName,
-                      photoURL: user.user.photoURL,
-                      ));
+                    uid: user.user.uid,
+                    email: user.user.email,
+                    username: user.user.displayName,
+                    photoURL: user.user.photoURL,
+                  ));
                 });
               },
               width: 300.0,
