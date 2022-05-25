@@ -1,8 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:generic_bloc_provider/generic_bloc_provider.dart';
+import 'package:platzi_trips_app/place/model/place.dart';
 import 'package:platzi_trips_app/place/ui/widgets/card_image.dart';
 
+import '../../../user/bloc/bloc_user.dart';
+import '../../../widgets/button_purple.dart';
 import '../../../widgets/gradient_back.dart';
 import '../../../widgets/text_input.dart';
 import '../../../widgets/title_header.dart';
@@ -27,6 +31,7 @@ class _AppPlaceScreen extends State<AppPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserBloc userBloc = BlocProvider.of(context);
     return Scaffold(
       body: Stack(children: <Widget>[
         GradientBack(height: 300.0),
@@ -59,14 +64,15 @@ class _AppPlaceScreen extends State<AppPlaceScreen> {
                 alignment: Alignment.center,
                 child: CardImageWithFabICON(
                   pathImage: widget.image.path,
-                  height: 350,
-                  width: 500,
+                  height: 350.0,
+                  width: 250.0,
                   iconData: Icons.camera,
+                  left: 0.0,
                 ),
               ),
               //Titulo
               Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
+                  margin: EdgeInsets.only(top: 22.0, bottom: 20.0),
                   child: TextInput(
                       hintText: "Title",
                       inputType: null,
@@ -84,7 +90,32 @@ class _AppPlaceScreen extends State<AppPlaceScreen> {
                   child: TextInputLocation(
                       hintText: "Location",
                       iconData: Icons.location_on_outlined,
-                      controller: _controllerLocationPlace))
+                      controller: _controllerLocationPlace)),
+
+              //add place button
+              Container(
+                width: 70.0,
+                child: ButtonPurple(
+                    buttonText: "Add Place",
+                    onPressed: () {
+                      //1. firebase storage
+                      //url
+                      
+                      //2. cloud firestore
+                      userBloc.updatePlaceDate(Place(name: _controllerTitlePlace.text, 
+                        description: _controllerDescriptionPlace.text, 
+                        likes: 0
+                        
+                        // ignore: sdk_version_set_literal
+                        )).whenComplete(() {
+                          print("TERMINOOO");
+                          Navigator.pop(context);
+
+                        }
+                        
+                        );
+                    }),
+              )
             ]))
       ]),
     );
