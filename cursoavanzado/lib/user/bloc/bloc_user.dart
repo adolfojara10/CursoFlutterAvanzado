@@ -1,11 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:generic_bloc_provider/generic_bloc_provider.dart';
 import 'package:platzi_trips_app/user/repository/auth_repository.dart';
+import 'package:platzi_trips_app/user/repository/cloud_firestore_api.dart';
 import '../../place/model/place.dart';
 import '../model/user.dart';
 import '../repository/cloud_firestore_repository.dart';
+import 'package:platzi_trips_app/place/repository/firebase_storage_repo.dart';
+
+import '../ui/widgets/profile_place.dart';
 
 class UserBloc implements Bloc {
   final _auth_repo = AuthRepository();
@@ -13,6 +20,10 @@ class UserBloc implements Bloc {
   //stream de firebase(si es de otra app como Facebook seria StreamController)
   Stream<User> streamFirebase = FirebaseAuth.instance.authStateChanges();
   Stream<User> get authStatus => streamFirebase;
+
+  Future<User> currentUser() async {
+    return FirebaseAuth.instance.currentUser;
+  }
 
   //casos de uso de user
   //Sign in
@@ -29,6 +40,16 @@ class UserBloc implements Bloc {
 
   Future<void> updatePlaceDate(Place place) =>
       _cloudFirestoreRepository.updatePlaceData(place);
+
+  Stream placeListStream() => _cloudFirestoreRepository.placeListStream();
+  
+  final FirebaseStorageRepository _firebaseStorageRepository =
+      FirebaseStorageRepository();
+
+  Future<UploadTask> uploadFile(String path, File image) =>
+      _firebaseStorageRepository.uploadFile(path, image);
+
+   List<ProfilePlace> buildPlaces(List<DocumentSnapshot> placesListSnapshot) => _cloudFirestoreRepository.buildPlaces(placesListSnapshot);
 
   signOut() {
     _auth_repo.signOut();

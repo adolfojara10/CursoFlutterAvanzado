@@ -8,7 +8,7 @@ class Place {
   String description;
   String uriImage;
   int likes;
-  UserF userOwner;
+  //UserF userOwner;
 
   Place(
       {Key key,
@@ -16,5 +16,6 @@ class Place {
       @required this.description,
       @required this.uriImage,
       this.likes,
-      @required this.userOwner});
+      //@required this.userOwner
+      });
 }

@@ -3,6 +3,7 @@ import 'package:platzi_trips_app/user/repository/cloud_firestore_api.dart';
 
 import '../../place/model/place.dart';
 import '../model/user.dart';
+import '../ui/widgets/profile_place.dart';
 
 class CloudFirestoreRepository {
   final CloudFirestoreAPI _cloudFirestoreAPI = CloudFirestoreAPI();
@@ -11,4 +12,9 @@ class CloudFirestoreRepository {
       _cloudFirestoreAPI.updateUserData(user);
 
   Future<void> updatePlaceData(Place place) => CloudFirestoreAPI().updatePlaceData(place);
+
+   Stream<QuerySnapshot> placeListStream() => _cloudFirestoreAPI.placeListStream();
+
+    List<ProfilePlace> buildPlaces(List<DocumentSnapshot> placesListSnapshot) => _cloudFirestoreAPI.buildPlaces(placesListSnapshot);
+
 }

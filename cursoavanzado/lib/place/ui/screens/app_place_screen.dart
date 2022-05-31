@@ -1,5 +1,10 @@
+// ignore_for_file: missing_required_param
+
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:generic_bloc_provider/generic_bloc_provider.dart';
 import 'package:platzi_trips_app/place/model/place.dart';
@@ -94,28 +99,48 @@ class _AppPlaceScreen extends State<AppPlaceScreen> {
 
               //add place button
               Container(
-                width: 70.0,
-                child: ButtonPurple(
-                    buttonText: "Add Place",
-                    onPressed: () {
-                      //1. firebase storage
-                      //url
-                      
-                      //2. cloud firestore
-                      userBloc.updatePlaceDate(Place(name: _controllerTitlePlace.text, 
-                        description: _controllerDescriptionPlace.text, 
-                        likes: 0
-                        
-                        // ignore: sdk_version_set_literal
-                        )).whenComplete(() {
-                          print("TERMINOOO");
-                          Navigator.pop(context);
+                  width: 70.0,
+                  child: ButtonPurple(
+                      buttonText: "Add Place",
+                      onPressed: () {
+                        //id del usuario logeado
+                        userBloc.currentUser().then((User user) async {
+                          if (user != null) {
+                            String uid = user.uid;
+                            String path =
+                                "${uid}/${DateTime.now().toString()}.jpg";
+                            //1. firebase storage
+                            //url
+                            // ignore: sdk_version_set_literal
+                            userBloc
+                                .uploadFile(path, widget.image)
+                                .then((UploadTask storageUploadTask) {
+                              storageUploadTask
+                                  .whenComplete(() => null)
+                                  .then((TaskSnapshot snapshot) {
+                                snapshot.ref.getDownloadURL().then((urlImage) {
+                                  print("URLIMAGE: ${urlImage}");
 
-                        }
-                        
-                        );
-                    }),
-              )
+                                  //2. cloud firestore
+                                  userBloc
+                                      .updatePlaceDate(Place(
+                                          name: _controllerTitlePlace.text,
+                                          description:
+                                              _controllerDescriptionPlace.text,
+                                          likes: 0
+
+                                          // ignore: sdk_version_set_literal
+                                          ))
+                                      .whenComplete(() {
+                                    print("TERMINOOO");
+                                    Navigator.pop(context);
+                                  });
+                                });
+                              });
+                            });
+                          }
+                        });
+                      }))
             ]))
       ]),
     );
