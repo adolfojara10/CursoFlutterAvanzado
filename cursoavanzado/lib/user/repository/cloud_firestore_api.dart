@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 import '../../place/model/place.dart';
+import '../../place/ui/widgets/card_image.dart';
 import '../model/user.dart';
 import '../ui/widgets/profile_place.dart';
 
@@ -11,6 +13,12 @@ class CloudFirestoreAPI {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  UserF cargarUsuario() {
+    User us = _auth.currentUser;
+
+    return UserF(uid: us.uid, email: us.email);
+  }
 
   void updateUserData(UserF user) async {
     CollectionReference users = _db.collection(USERS);
@@ -59,9 +67,10 @@ class CloudFirestoreAPI {
         .snapshots();
   }
 
-  List<ProfilePlace> buildPlaces(List<DocumentSnapshot> placesListSnapshot) {
+  List<ProfilePlace> buildMyPlaces(List<DocumentSnapshot> placesListSnapshot) {
     // ignore: deprecated_member_use
     List<ProfilePlace> profilePlaces = List<ProfilePlace>();
+
     placesListSnapshot.forEach((p) {
       profilePlaces.add(ProfilePlace(Place(
           name: p['name'],
@@ -71,5 +80,45 @@ class CloudFirestoreAPI {
     });
 
     return profilePlaces;
+  }
+
+  List<Place> buildPlaces(
+      List<DocumentSnapshot> placesListSnapshot, UserF user) {
+    List places = List();
+
+    placesListSnapshot.forEach((p) {
+      Place place = Place(
+          id: p['id'],
+          name: p["name"],
+          description: p["description"],
+          uriImage: p["uriImage"],
+          likes: p["likes"]);
+      List usersLikedRefs = p["usersLiked"];
+      place.liked = false;
+      usersLikedRefs?.forEach((drUL) {
+        if (user.uid == drUL.documentID) {
+          place.liked = true;
+        }
+      });
+      places.add(place);
+    });
+    return places;
+  }
+
+  Future likePlace(Place place, String uid) async {
+    await _db
+        .collection(PLACES)
+        .doc(place.id)
+        .get()
+        .then((DocumentSnapshot ds) {
+      int likes = ds["likes"];
+
+      _db.collection(PLACES).doc(place.id).update({
+        'likes': place.liked ? likes + 1 : likes - 1,
+        'usersLiked': place.liked
+            ? FieldValue.arrayUnion([_db.doc("${USERS}/${uid}")])
+            : FieldValue.arrayRemove([_db.doc("${USERS}/${uid}")])
+      });
+    });
   }
 }

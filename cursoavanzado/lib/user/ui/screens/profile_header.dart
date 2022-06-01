@@ -9,8 +9,9 @@ import '../../bloc/bloc_user.dart';
 import '../../model/user.dart';
 
 class ProfileHeader extends StatelessWidget {
-  UserBloc userBloc;
   UserF user;
+
+  ProfileHeader(@required this.user);
 
   Widget showProfileData(AsyncSnapshot snapshot) {
     if (!snapshot.hasData || snapshot.hasError) {
@@ -56,31 +57,7 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    userBloc = BlocProvider.of<UserBloc>(context);
-
-    return StreamBuilder(
-      stream: userBloc.streamFirebase,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        //se monitorea el estado de la conexion
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return CircularProgressIndicator();
-            break;
-          case ConnectionState.waiting:
-            return CircularProgressIndicator();
-            break;
-          case ConnectionState.active:
-            return showProfileData(snapshot);
-
-            break;
-          case ConnectionState.done:
-            return showProfileData(snapshot);
-            break;
-        }
-      },
-    );
-
-    /* final title = Text(
+    final title = Text(
       'Profile',
       style: TextStyle(
           fontFamily: 'Lato',
@@ -96,10 +73,10 @@ class ProfileHeader extends StatelessWidget {
           Row(
             children: <Widget>[title],
           ),
-          UserInfo('assets/img/ann.jpg', 'Anahí Salgado', 'anahi@platzi.com'),
+          UserInfo(user),
           ButtonsBar()
         ],
       ),
-    );*/
+    );
   }
 }
